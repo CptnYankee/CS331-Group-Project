@@ -29,14 +29,11 @@ CREATE TABLE UsrAccnt(
 
 CREATE TABLE Resident(
 	StudentID INT(10) NOT NULL,
+	Password VARCHAR,
 	ResName VARCHAR(20) NOT NULL,
 	Gender CHAR(1) NOT NULL,
 	MaritalStatus BOOL,
 	Address VARCHAR(255) NOT NULL,
-	/*
-	BuildingID?
-	Apartment?
-	*/
 	Phone INT(11),
 	Major VARCHAR(20),
 	Department VARCHAR(20),
@@ -48,6 +45,7 @@ CREATE TABLE Resident(
 
 CREATE TABLE Applicant(
 	StudentID INT(10) NOT NULL,
+	Password VARCHAR,
 	SSN int(9) NOT NULL,
 	AppName VARCHAR(20) NOT NULL,
 	Gender CHAR(1) NOT NULL,
@@ -75,6 +73,7 @@ CREATE TABLE MaintenanceRequest(
 	RequestID SMALLINT(5) NOT NULL AUTO_INCREMENT,
 	BuildingID VARCHAR(5) NOT NULL,
 	RoomNum TINYINT(4) NOT NULL,
+	FloorNum TINYINT(4) NOT NULL,
 	Submission DATE NOT NULL,
 	ClearDate DATE DEFAULT NULL,
 	Description TEXT,
@@ -82,7 +81,8 @@ CREATE TABLE MaintenanceRequest(
 	Employee VARCHAR(50),
 	PRIMARY KEY (RequestID),
 	FOREIGN KEY (BuildingID) REFERENCES Room(BuildingID),
-	FOREIGN KEY (RoomNum) REFERENCES Room(RoomNum)
+	FOREIGN KEY (RoomNum) REFERENCES Room(RoomNum),
+	FOREIGN KEY (FloorNum) REFERENCES Room(FloorNum)
 );
 
 drop table MaintenanceRequest;
@@ -128,7 +128,7 @@ CREATE TABLE AdminAccnt(
 	Primary Key (StaffID)
 );
 
-CREATE TABLE HousingAccnt(
+/*CREATE TABLE HousingAccnt(
 	Username VARCHAR(25) NOT NULL,
     Pass VARCHAR(25) NOT NULL,
     StaffID INT(5),
@@ -137,3 +137,4 @@ CREATE TABLE HousingAccnt(
     Foreign KEY  (StaffID) REFERENCES AdminAccnt(StaffID),
     Foreign KEY (StudentID) REFERENCES UsrAccnt(StudentID)
 );
+*/
