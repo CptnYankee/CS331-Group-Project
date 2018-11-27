@@ -1,14 +1,3 @@
-CREATE TABLE UsrAccnt(
-	StudentID INT(10) NOT NULL,
-	Major VARCHAR(20),
-	GradeLevel ENUM('Freshman','Sophmore','Junior','Senior'),
-	SpouseID INT(10) DEFAULT NULL,
-	Alumni Bool,
-	Student Bool,
-	Graduation_Year YEAR(4),
-	Degree VARCHAR(20),
-	PRIMARY KEY (StudentID)
-);
 CREATE TABLE AdminAccnt(
 	StaffID INT(5) NOT NULL,
 	Password VARCHAR NOT NULL,
@@ -22,6 +11,12 @@ CREATE TABLE AdminAccnt(
 CREATE TABLE Person(
 	SSN INT(9) NOT NULL,
 	StudentID INT(10),
+	Alumni Bool,
+	Graduation_Year YEAR(4),
+	Degree VARCHAR(20),
+	Student Bool,
+	Major VARCHAR(20),
+	GradeLevel ENUM('Freshman','Sophmore','Junior','Senior'),
 	StaffID INT(5),
 	StaffPosition VARCHAR(20),
 	Name VARCHAR(20),
@@ -29,6 +24,7 @@ CREATE TABLE Person(
 	DOB DATE NOT NULL,
 	Phone INT(11),
 	MaritalStatus BOOL,
+	SpouseID INT(10) DEFAULT NULL,
 	Email VARCHAR(25),
 	Gender CHAR(1) NOT NULL,
 	PRIMARY KEY (SSN),
