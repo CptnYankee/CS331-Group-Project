@@ -76,7 +76,7 @@ CREATE TABLE MaintenanceRequest(
 	BuildingID VARCHAR(5) NOT NULL,
 	RoomNum TINYINT(4) NOT NULL,
 	FloorNum TINYINT(4) NOT NULL,
-	Submission DATE NOT NULL,
+	SubmissionDate DATE NOT NULL,
 	ClearDate DATE DEFAULT NULL,
 	Description TEXT,
 	ResidentName VARCHAR(50),
