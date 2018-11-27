@@ -73,6 +73,7 @@ CREATE TABLE Applicant(
 CREATE TABLE MaintenanceRequest(
 	/*Easy Primary Key*/
 	RequestID SMALLINT(5) NOT NULL AUTO_INCREMENT,
+	SubmitterID INT(10) NOT NULL,
 	BuildingID VARCHAR(5) NOT NULL,
 	RoomNum TINYINT(4) NOT NULL,
 	FloorNum TINYINT(4) NOT NULL,
@@ -82,6 +83,7 @@ CREATE TABLE MaintenanceRequest(
 	ResidentName VARCHAR(50),
 	Employee VARCHAR(50),
 	PRIMARY KEY (RequestID),
+	FOREIGN KEY (SubmitterID) REFERENCES Person(StudentID),
 	FOREIGN KEY (BuildingID) REFERENCES Room(BuildingID),
 	FOREIGN KEY (RoomNum) REFERENCES Room(RoomNum),
 	FOREIGN KEY (FloorNum) REFERENCES Room(FloorNum)
