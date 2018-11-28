@@ -1,6 +1,15 @@
+/*
+drop table MaintenanceRequest;
+drop table Room;
+drop table Resident;
+drop table Applicant;
+drop table Person;
+drop table AdminAccnt;
+*/
+
 CREATE TABLE AdminAccnt(
 	StaffID INT(5) NOT NULL,
-	Password VARCHAR NOT NULL,
+	Password VARCHAR(15) NOT NULL,
 	Name VARCHAR(50) NOT NULL,
 	Department VARCHAR(20),
 	PhoneNum INT(11),
@@ -8,6 +17,7 @@ CREATE TABLE AdminAccnt(
 	Position VARCHAR(20),
 	Primary Key (StaffID)
 );
+
 CREATE TABLE Person(
 	SSN INT(9) NOT NULL,
 	StudentID INT(10),
@@ -27,13 +37,14 @@ CREATE TABLE Person(
 	SpouseID INT(10) DEFAULT NULL,
 	Email VARCHAR(25),
 	Gender CHAR(1) NOT NULL,
-	PRIMARY KEY (SSN),
-    Foreign Key (StudentID) REFERENCES UsrAccnt(StudentID),
+	PRIMARY KEY (StudentID),
     Foreign Key (StaffID) REFERENCES AdminAccnt(StaffID)
 );
+
 CREATE TABLE Resident(
 	StudentID INT(10) NOT NULL,
-	Password VARCHAR,
+    RoomNum TINYINT(4) NOT NULL,
+	Password VARCHAR(15),
 	ResName VARCHAR(20) NOT NULL,
 	Gender CHAR(1) NOT NULL,
 	MaritalStatus BOOL,
@@ -43,12 +54,12 @@ CREATE TABLE Resident(
 	Department VARCHAR(20),
 	HeadSSN INT(9) NOT NULL,
 	Primary Key (StudentID),
-	FOREIGN Key (StudentID) REFERENCES UsrAccnt(StudentID),
-	FOREIGN Key (HeadSSN) REFERENCES Person(SSN)
+	FOREIGN Key (StudentID) REFERENCES Person(StudentID)
 );
+
 CREATE TABLE Applicant(
 	StudentID INT(10) NOT NULL,
-	Password VARCHAR,
+	Password VARCHAR(15),
 	SSN int(9) NOT NULL,
 	AppName VARCHAR(20) NOT NULL,
 	Gender CHAR(1) NOT NULL,
@@ -66,10 +77,20 @@ CREATE TABLE Applicant(
 	RoomPref3 ENUM('Suite','Apartment','Single Bedroom','Double Bedroom'),
     
 	Primary Key (StudentID,SSN),
-	FOREIGN Key (StudentID) REFERENCES UsrAccnt(StudentID),
-	FOREIGN KEY (SSN) REFERENCES Person(SSN),
-	FOREIGN KEY (HeadSSN) REFERENCES Person(SSN)
+	FOREIGN KEY (StudentID) REFERENCES Person(StudentID)
 );
+CREATE TABLE Room(
+	BuildingID VARCHAR(5) NOT NULL,
+	RoomNum TINYINT(4) NOT NULL,
+	FloorNum TINYINT(4) NOT NULL,
+	Address VARCHAR(255) NOT NULL,
+    Marriage Bool,
+    AStyle ENUM('Two Bedroon, Four Persons','Four Bedrooms, Four Persons'),
+	SStyle ENUM('One Bedroom, One Person','One Bedroom, Two Persons','Two Bedroom, Two Persons,','Two Bedroom, Three Persons'),
+	SpaceAvailable ENUM('0','1','2','3','4'),
+    Primary Key (BuildingID,RoomNum,FloorNum)
+);
+
 CREATE TABLE MaintenanceRequest(
 	/*Easy Primary Key*/
 	RequestID SMALLINT(5) NOT NULL AUTO_INCREMENT,
@@ -83,19 +104,6 @@ CREATE TABLE MaintenanceRequest(
 	ResidentName VARCHAR(50),
 	Employee VARCHAR(50),
 	PRIMARY KEY (RequestID),
-	FOREIGN KEY (SubmitterID) REFERENCES Person(StudentID),
-	FOREIGN KEY (BuildingID) REFERENCES Room(BuildingID),
-	FOREIGN KEY (RoomNum) REFERENCES Room(RoomNum),
-	FOREIGN KEY (FloorNum) REFERENCES Room(FloorNum)
-);
-CREATE TABLE Room(
-	BuildingID VARCHAR(5) NOT NULL,
-	RoomNum TINYINT(4) NOT NULL,
-	FloorNum TINYINT(4) NOT NULL,
-	Address VARCHAR(255) NOT NULL,
-    Marriage Bool,
-    AStyle ENUM('Two Bedroon, Four Persons','Four Bedrooms, Four Persons'),
-	SStyle ENUM('One Bedroom, One Person','One Bedroom, Two Persons','Two Bedroom, Two Persons,','Two Bedroom, Three Persons'),
-	SpaceAvailable ENUM('0','1','2','3','4'),
-    Primary Key (BuildingID,RoomNum)
+	FOREIGN KEY (SubmitterID) REFERENCES Person(StudentID)
+
 );
