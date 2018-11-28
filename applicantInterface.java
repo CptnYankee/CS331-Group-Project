@@ -20,49 +20,21 @@ public class applicantInterface {
 		if (grantAccess == true) {
 			System.out.println("\n\t\tAccess granted.");
 			boolean prefersRoommate = promptRoommatePreference();
-			if (prefersRoommate == false) { 
-				int selection;
-				displayRoomsNoPref();
-				Scanner scIn = new Scanner(System.in);
-				selection = scIn.nextInt();
-				if (selection == 1) {}
-				if (selection == 2) {}
-				if (selection == 3) {}
-				if (selection == 4) {}
-				if (selection == 5) {}
-				if (selection == 6) {}
-				else {}
-			}
+			if (prefersRoommate == false) { displayRoomsNoPref(); }
 			if (prefersRoommate == true) {
 				prefRoomMateSID = promptRoommatePrefSID();
 				isMarried = promptMarriedToRoommatePref();
 				boolean prefIsResident = checkResidency(prefRoomMateSID);
-				if (prefIsResident == true) {
+				if (prefIsResident) {
 					boolean available = checkEligibility(prefRoomMateSID);
-					if (available == true) { /* Assign them to their preferred roommate's room */ }
-				}
-				if (prefIsResident == false) {
-					if (isMarried == true) {
-						int selection;
-						displayRoomsMarried(); 
-						Scanner scIn = new Scanner(System.in);
-						selection = scIn.nextInt();
-						if (selection == 1) {}
-						if (selection == 2) {}
-						else {}
+					if (available) { 
+						// Search query, pull prefRoomMate's room#
+						// Alter statement, give this person that same room#
+						// 
 					}
-					if (isMarried == false) { 
-						int selection;
-						displayRoomsWithPref();
-						Scanner scIn = new Scanner(System.in);
-						selection = scIn.nextInt();
-						if (selection == 1) {}
-						if (selection == 2) {}
-						if (selection == 3) {}
-						if (selection == 4) {}
-						if (selection == 5) {}
-						if (selection == 6) {}
-						else {}					}
+				} else {
+					if (isMarried == true) { displayRoomsMarried(); }
+					if (isMarried == false) { displayRoomsWithPref(); }
 				}
 			}
 		}
@@ -76,20 +48,33 @@ public class applicantInterface {
 		System.out.println("**************************************************************************************");
 	}
 	public static void displayRoomsNoPref() {
-		// For testing:
-		System.out.println("\nPlease choose from an available option:");
+		System.out.println("\nPlease choose from an available option:\n");
 		// QueryA for following
 		System.out.println("[1] Two Bedroom Apartment, Four Persons\t\tA");
 		// QueryB for following
 		System.out.println("[2] Four Bedroom Apartment, Four Persons\tB");
 		// QueryC for following
-		System.out.println("[3] One Bedroom Apartment, One Persons\t\tC");
+		System.out.println("[3] One Bedroom Suite, One Persons\t\tC");
 		// QueryD for following
-		System.out.println("[4] One Bedroom Apartment, Two Persons\t\tD");
+		System.out.println("[4] One Bedroom Suite, Two Persons\t\tD");
 		// QueryE for following
-		System.out.println("[5] Two Bedroom Apartment, Two Persons\t\tE");
+		System.out.println("[5] Two Bedroom Suite, Two Persons\t\tE");
 		// QueryF for following
-		System.out.println("[6] Two Bedroom Apartment, Three Persons\tF");
+		System.out.println("[6] Two Bedroom Suite, Three Persons\tF");				
+		int selection;
+		Scanner scIn = new Scanner(System.in);
+		selection = scIn.nextInt();
+		if (selection == 1) { assignRoomStyle("Two Bedroom, Four Persons", 1); }
+		if (selection == 2) { assignRoomStyle("Four Bedroom, Four Persons", 1); }
+		if (selection == 3) { assignRoomStyle("One Bedroom, One Persons", 1); }
+		if (selection == 4) { assignRoomStyle("One Bedroom, Two Persons", 1); }
+		if (selection == 5) { assignRoomStyle("Two Bedroom, Two Persons", 1); }
+		if (selection == 6) { assignRoomStyle("Two Bedroom, Three Persons", 1); }
+		else if (selection < 1 || 6 < selection) { 
+			System.out.println("\n\t\t\tInvalid option. Try again.");
+			Scanner scIn2 = new Scanner(System.in);
+			selection = scIn2.nextInt();
+		}
 	}
 	public static void displayRoomsWithPref() {
 		// *NOTE* --> These queries check for bedsAvailable >= 2
@@ -100,21 +85,45 @@ public class applicantInterface {
 		// QueryB for following
 		System.out.println("[2] Four Bedroom Apartment, Four Persons\tB");
 		// QueryC for following
-		System.out.println("[3] One Bedroom Apartment, One Persons\t\tC");
+		System.out.println("[3] One Bedroom Suite, One Persons\t\tC");
 		// QueryD for following
-		System.out.println("[4] One Bedroom Apartment, Two Persons\t\tD");
+		System.out.println("[4] One Bedroom Suite, Two Persons\t\tD");
 		// QueryE for following
-		System.out.println("[5] Two Bedroom Apartment, Two Persons\t\tE");
+		System.out.println("[5] Two Bedroom Suite, Two Persons\t\tE");
 		// QueryF for following
-		System.out.println("[6] Two Bedroom Apartment, Three Persons\tF");
+		System.out.println("[6] Two Bedroom Suite, Three Persons\tF");
+		int selection;
+		Scanner scIn = new Scanner(System.in);
+		selection = scIn.nextInt();
+		if (selection == 1) { assignRoomStyle("Two Bedroom, Four Persons", 2); }
+		if (selection == 2) { assignRoomStyle("Four Bedroom, Four Persons", 2); }
+		if (selection == 3) { assignRoomStyle("One Bedroom, One Persons", 2); }
+		if (selection == 4) { assignRoomStyle("One Bedroom, Two Persons", 2); }
+		if (selection == 5) { assignRoomStyle("Two Bedroom, Two Persons", 2); }
+		if (selection == 6) { assignRoomStyle("Two Bedroom, Three Persons", 2); }
+		else if (selection < 1 || 6 < selection) { 
+			System.out.println("\n\t\t\tInvalid option. Try again.");
+			Scanner scIn2 = new Scanner(System.in);
+			selection = scIn2.nextInt();
+		}
 	}
 	public static void displayRoomsMarried() {
 		// For testing:
 		System.out.println("\nPlease choose from an available option:");
 		// QueryA for following
-		System.out.println("[1] One Bedroom Apartment, Two Persons\t\tA");
+		System.out.println("[1] One Bedroom Suite, Two Persons\t\tA");
 		// QueryB for following
-		System.out.println("[2] Two Bedroom Apartment, Two Persons\t\tB");
+		System.out.println("[2] Two Bedroom Suite, Two Persons\t\tB");
+		int selection;
+		Scanner scIn = new Scanner(System.in);
+		selection = scIn.nextInt();
+		if (selection == 1) { assignRoomStyle("One Bedroom, Two Persons", 1); }
+		if (selection == 2) { assignRoomStyle("Two Bedroom, Two Persons", 2); }
+		else if (selection < 1 || 2 < selection) { 
+			System.out.println("\n\t\t\tInvalid option. Try again.");
+			Scanner scIn2 = new Scanner(System.in);
+			selection = scIn2.nextInt();
+		}
 	}
 	// Authentication
 	public static boolean authenticateApplicant() {
@@ -181,8 +190,12 @@ public class applicantInterface {
 	}
 	// Accessor
 	public static int getRoom(int SID) {
-		int room = 0; // QUERY to retrieve room#'s using SID
+		int room = 0; 
+		// QUERY to retrieve room#'s using SID
 		return room;
+	}
+	public static void assignRoomStyle(String style, int minBeds) {
+		// search query, pull room# of a 1st room with matching description (style) and minimum number of beds (minBeds) available
 	}
 	
 }
