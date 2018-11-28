@@ -43,7 +43,8 @@ CREATE TABLE Person(
 
 CREATE TABLE Resident(
 	StudentID INT(10) NOT NULL,
-    RoomNum TINYINT(4) NOT NULL,
+	RoomNum TINYINT(4) NOT NULL,
+	BuildingID VARCHAR(5) NOT NULL,
 	Password VARCHAR(15),
 	ResName VARCHAR(20) NOT NULL,
 	Gender CHAR(1) NOT NULL,
