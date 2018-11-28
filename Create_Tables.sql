@@ -51,6 +51,7 @@ CREATE TABLE Resident(
 	Address VARCHAR(255) NOT NULL,
 	Phone INT(11),
 	Major VARCHAR(20),
+	Department VARCHAR(20),
 	HeadSSN INT(9) NOT NULL,
 	Primary Key (StudentID),
 	FOREIGN Key (StudentID) REFERENCES Person(StudentID)
@@ -84,8 +85,9 @@ CREATE TABLE Room(
 	FloorNum TINYINT(4) NOT NULL,
 	Address VARCHAR(255) NOT NULL,
     Marriage Bool,
-    AStyle ENUM('Two Bedroon, Four Persons','Four Bedrooms, Four Persons'),
-	SStyle ENUM('One Bedroom, One Person','One Bedroom, Two Persons','Two Bedroom, Two Persons,','Two Bedroom, Three Persons'),
+    Style ENUM('Two Bedroon, Four Persons','Four Bedrooms, Four Persons',
+				'One Bedroom, One Person','One Bedroom, Two Persons',
+                'Two Bedroom, Two Persons,','Two Bedroom, Three Persons'),
 	SpaceAvailable ENUM('0','1','2','3','4'),
     Primary Key (BuildingID,RoomNum,FloorNum)
 );
