@@ -51,7 +51,6 @@ CREATE TABLE Resident(
 	Address VARCHAR(255) NOT NULL,
 	Phone INT(11),
 	Major VARCHAR(20),
-	Department VARCHAR(20),
 	HeadSSN INT(9) NOT NULL,
 	Primary Key (StudentID),
 	FOREIGN Key (StudentID) REFERENCES Person(StudentID)
