@@ -21,7 +21,7 @@ CREATE TABLE AdminAccnt(
 CREATE TABLE Person(
 	SSN INT(9) NOT NULL,
 	StudentID INT(10) UNSIGNED NOT NULL,
-  Name VARCHAR(20),
+    Name VARCHAR(20),
 	Alumni Bool,
 	Graduation_Year YEAR(4),
 	Degree VARCHAR(20),
@@ -40,18 +40,16 @@ CREATE TABLE Person(
 
 CREATE TABLE Resident(
 	StudentID INT(10) UNSIGNED NOT NULL,
-	RoomNum TINYINT(4) UNSIGNED NOT NULL,
-	BuildingID TINYINT(4) NOT NULL,
 	Password VARCHAR(15),
 	ResName VARCHAR(20) NOT NULL,
 	Gender CHAR(1) NOT NULL,
 	MaritalStatus BOOLEAN,
 	RoomNum TINYINT(4) UNSIGNED NOT NULL,
-  BuildingID TINYINT(4) NOT NULL,
+    BuildingID TINYINT(4) NOT NULL,
 	Address VARCHAR(255) NOT NULL,
 	Phone INT(11),
 	Major VARCHAR(20),
-  PrefRoomate INT(10) UNSIGNED,
+    PrefRoomate INT(10),
 	Primary Key (StudentID),
 	FOREIGN Key (StudentID) REFERENCES Person(StudentID)
 );
@@ -79,8 +77,8 @@ CREATE TABLE Room(
 	RoomNum TINYINT(4) UNSIGNED NOT NULL,
 	FloorNum TINYINT(4) NOT NULL,
 	Address VARCHAR(255) NOT NULL,
-  Marriage BOOLEAN,
-  Style TEXT(30),
+    Marriage BOOLEAN,
+    Style TEXT(30),
 	SpaceAvailable ENUM('0','1','2','3','4'),
     Primary Key (BuildingID,RoomNum,FloorNum)
 );
@@ -93,7 +91,7 @@ CREATE TABLE MaintenanceRequest(
 	RoomNum TINYINT(4) UNSIGNED NOT NULL,
 	FloorNum TINYINT(4) NOT NULL,
 	SubmissionDate DATE NOT NULL,
-	ClearDate DATE DEFAULT NULL,
+	ClearDate DATE,
 	Description TEXT(30),
 	ResidentName VARCHAR(50),
 	Employee VARCHAR(50),
