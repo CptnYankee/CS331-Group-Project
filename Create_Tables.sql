@@ -54,6 +54,7 @@ CREATE TABLE Resident(
 	FOREIGN Key (StudentID) REFERENCES Person(StudentID)
 );
 
+
 CREATE TABLE Applicant(
 	StudentID INT(10) UNSIGNED NOT NULL,
 	Password VARCHAR(15),
