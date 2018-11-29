@@ -47,7 +47,6 @@ CREATE TABLE Resident(
 	Gender CHAR(1) NOT NULL,
 	MaritalStatus BOOLEAN,
 	RoomNum TINYINT(4) UNSIGNED NOT NULL,
-  BuildingID TINYINT(4) NOT NULL,
 	Address VARCHAR(255) NOT NULL,
 	Phone INT(11),
 	Major VARCHAR(20),
