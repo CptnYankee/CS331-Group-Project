@@ -4,18 +4,18 @@ import java.util.*;
 
 public class applicantInterface {				
 	private static int mySID;
-	private static String Password;
-	private static int prefRoomMateBOOL;
-	private static int prefRoomMateSID;
+	private static String prefRoomMateSID;
+	private static int prefRoomMateSID_int;
 	private static boolean isMarried;
-	private static String prefRoomStyle;
-
+	// rename main() to applicant(conn) when implementing into final code
 	public static void main(String[] args) throws SQLException, ClassNotFoundException {
+		// Establish connection. Can be deleted when implemented into final code
 		Class.forName("com.mysql.cj.jdbc.Driver");
 		String url = "jdbc:mysql://localhost:3306/HousingProject_CS331?serverTimezone=UTC&useSSL=TRUE";
 		String user = "student";
 		String password = "password";
 		Connection conn = DriverManager.getConnection(url, user, password);
+		// End of establishing connection statements, beginning of applicant(conn)
 		header();
 		boolean grantAccess = authenticateApplicant(conn);
 		if (grantAccess == false) { System.out.println("\n\t\tAccess to the Housing Application has been denied."); }
@@ -24,13 +24,13 @@ public class applicantInterface {
 			boolean prefersRoommate = promptRoommatePreference();
 			if (prefersRoommate == false) { displayRoomsNoPref(conn); }
 			if (prefersRoommate == true) {
-				prefRoomMateSID = promptRoommatePrefSID();
+				prefRoomMateSID = promptRoommatePrefSID(conn);
 				isMarried = promptMarriedToRoommatePref();
-				boolean prefIsResident = checkResidency(prefRoomMateSID, conn);
+				boolean prefIsResident = checkResidency(prefRoomMateSID_int, conn);
 				if (prefIsResident) {
 					System.out.println("Your preferred roommate is already a resident.");
-					boolean available = checkEligibility(prefRoomMateSID, conn);
-					if (available) { assignToRoommateRoom(prefRoomMateSID, conn); }
+					boolean available = checkEligibility(prefRoomMateSID_int, conn);
+					if (available) { assignToRoommateRoom(prefRoomMateSID_int, conn); }
 				} 
 				else {
 					if (isMarried == true) { displayRoomsMarried(conn); }
@@ -48,6 +48,7 @@ public class applicantInterface {
 		System.out.println("**************************************************************************************");
 	}
 	public static void displayRoomsNoPref(Connection conn) throws SQLException {
+		// Interface: display available options
 		System.out.println("\nPlease choose from an available option.\n");
 		System.out.println("\tRoom Style:\t\t\tRooms available:");
 		int a = roomAvailability("Two Bedroom, Four Persons", 1, conn);
@@ -62,9 +63,11 @@ public class applicantInterface {
 		System.out.println("[4] One Bedroom Suite, Two Persons\t\t\t" + d);
 		System.out.println("[5] Two Bedroom Suite, Two Persons\t\t\t" + e);
 		System.out.println("[6] Two Bedroom Suite, Three Persons\t\t\t" + f);
+		// Console input
 		int selection;
 		Scanner scIn = new Scanner(System.in);
 		selection = scIn.nextInt();
+		// Assign to room based on input
 		if (selection == 1) { assignRoomStyle("Two Bedroom, Four Persons", 1, conn); }
 		if (selection == 2) { assignRoomStyle("Four Bedroom, Four Persons", 1, conn); }
 		if (selection == 3) { assignRoomStyle("One Bedroom, One Person", 1, conn); }
@@ -79,6 +82,7 @@ public class applicantInterface {
 	}
 	public static void displayRoomsWithPref(Connection conn) throws SQLException {
 		// *NOTE* --> These queries check for bedsAvailable >= 2
+		// Interface: display available options
 		System.out.println("\nPlease choose from an available option.\n");
 		System.out.println("\tRoom Style:\t\t\tRooms available:");
 		int a = roomAvailability("Two Bedroom, Four Persons", 2, conn);
@@ -109,15 +113,18 @@ public class applicantInterface {
 		}
 	}
 	public static void displayRoomsMarried(Connection conn) throws SQLException {
+		// Interface: display available options
 		System.out.println("\nPlease choose from an available option.\n");
 		System.out.println("\tRoom Style:\t\t\tRooms available:");
 		int a = roomAvailability("One Bedroom, Two Persons", 1, conn);
 		int b = roomAvailability("Two Bedroom, Two Persons", 1, conn);
 		System.out.println("[1] One Bedroom Suite, Two Persons\t\t\t" + a);
 		System.out.println("[2] Two Bedroom Suite, Two Persons\t\t\t" + b);
+		// Console input
 		int selection;
 		Scanner scIn = new Scanner(System.in);
 		selection = scIn.nextInt();
+		// Assign to room based on input
 		if (selection == 1) { assignRoomStyle("One Bedroom, Two Persons", 1, conn); }
 		if (selection == 2) { assignRoomStyle("Two Bedroom, Two Persons", 2, conn); }
 		else if (selection < 1 || 2 < selection) { 
@@ -133,18 +140,14 @@ public class applicantInterface {
 		System.out.print("Enter StudentID:\t\t");
 		Scanner in = new Scanner(System.in);
 		StudentID = in.nextInt();
+		mySID = StudentID;
 		System.out.print("Enter Password:\t\t\t");
 		Scanner in2 = new Scanner(System.in);
 		Password = in2.nextLine();
-		setUSER(StudentID, Password);
 		boolean isApplicant = false;
 		int room = getRoom(StudentID, conn);
 		if (room == 0) { isApplicant = true; } // room == 0 to allow access during testing, otherwise room != 0
 		return isApplicant;
-	}
-	public static void setUSER(int sid, String pw) {
-		mySID = sid;
-		Password = pw;
 	}
 	// Prompts User
 	public static boolean promptRoommatePreference() {
@@ -162,11 +165,14 @@ public class applicantInterface {
 		}
 		return yn;
 	}
-	public static int promptRoommatePrefSID() {
-		int sID;
+	public static String promptRoommatePrefSID(Connection conn) {
+		String sID;
 		System.out.print("\nPlease enter their SID:\t\t");
 		Scanner in = new Scanner(System.in);
-		sID = in.nextInt();
+		sID = in.nextLine();
+		prefRoomMateSID = sID;
+		prefRoomMateSID_int = Integer.parseInt(prefRoomMateSID);
+		updatePrefRoomate(prefRoomMateSID_int, conn);
 		return sID;
 	}
 	public static boolean promptMarriedToRoommatePref() {
@@ -180,10 +186,10 @@ public class applicantInterface {
 		return yn;
 	}
 	// Queries
-	public static boolean checkResidency(int sid, Connection conn) {
-		int room = getRoom(sid, conn);
-		if (room != 0) { System.out.println("Your pref roommate is not a resident."); return false; }
-		else { System.out.println("Your pref roommate is a resident (testing)"); return true; } // true. false for testing
+	public static boolean checkResidency(int prefSID, Connection conn) {
+		int room = getRoom(prefSID, conn);
+		if (room == 0) { System.out.println("Your pref roommate is not a resident."); return false; } // == 0 for testing, != 0 when not testing.
+		else { System.out.println("Your pref roommate is a resident (default response until data is input)"); return true; } // true. false for testing
 		
 	}
 	public static boolean checkEligibility(int sid, Connection conn) {
@@ -201,7 +207,7 @@ public class applicantInterface {
 		try {
 			ps = conn.prepareStatement(query);
 			ps.setInt(1, room);
-			ps.setInt(2,  building);
+			ps.setInt(2, building);
 			ResultSet rs;
 			rs = ps.executeQuery(query);
 			bedsAvailable = rs.getInt(1);
@@ -210,13 +216,13 @@ public class applicantInterface {
 		if (bedsAvailable >= 1 && mySID == otherSID) { System.out.println("Applying to their room is available");return true; }
 		else {System.out.println("Applying to their room is unavailable");return false;} // false. true for testing
 	}
-	public static int getRoom(int SID, Connection conn) {
-		int room = 0; 
+	public static int getRoom(int sid, Connection conn) {
+		int room = 0;
 		String query = "SELECT RoomNum FROM Resident WHERE StudentID = ?";
 		PreparedStatement ps = null;
 		try {
 			ps = conn.prepareStatement(query);
-			ps.setInt(1, SID);
+			ps.setInt(1, sid);
 			ResultSet rs;
 			rs = ps.executeQuery(query);
 			room = rs.getInt(1);
@@ -236,6 +242,17 @@ public class applicantInterface {
 		} catch (SQLException ex) {/* ignore */}
 		return building;
 	}
+	private static void updatePrefRoomate(int pref, Connection conn) {
+		String update = "UPDATE Applicant SET PrefRoomate = ? WHERE StudentID = ?";
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement(update);
+			ps.setInt(1, pref);
+			ps.setInt(2, mySID);
+			ps.executeQuery(update);
+			System.out.println(pref + " has been set as your preferred roommate.");
+		} catch(SQLException ex) {/*ignore*/}
+	}	
 	public static int roomAvailability(String style, int minBeds, Connection conn) throws SQLException {
 		int roomAvail = 0;
 		String query = "SELECT COUNT(RoomNum) " +
@@ -256,16 +273,6 @@ public class applicantInterface {
 		// fields to fill in and transfer from Applicant to Resident
 		int roomNum = 0;
 		int buildingID = 0;
-		String pw = "";
-		int ssn = 0;
-		String AppName = "";
-		String gender = "";
-		boolean marStat = false;
-		String address = "";
-		int phone = 0;
-		String major = "";
-		String dept = "";
-		int hSSN = 0;
 		// Pull roomNum and buildingID
 		String query = "SELECT RoomNum, BuildingID " +
 						"FROM Resident " +
@@ -280,46 +287,17 @@ public class applicantInterface {
 			buildingID = rs.getInt(2);
 		} catch (SQLException ex) {/* ignore */}
 		// Transfer over personal information from Applicant to Resident
-		String query2 = "SELECT * " +
-						"FROM Applicant " +
-						"WHERE StudentID = ? ";
-		PreparedStatement stmt2 = null;
-		try {
-			stmt2 = conn.prepareStatement(query2);
-			stmt.setInt(1, mySID);
-			ResultSet rs2;
-			rs2 = stmt2.executeQuery(query2);
-			pw = rs2.getString(2);
-			ssn = rs2.getInt(3);
-			AppName = rs2.getString(4);
-			gender = rs2.getString(5);
-			marStat = rs2.getBoolean(6);
-			address = rs2.getString(7);
-			phone = rs2.getInt(8);
-			major = rs2.getString(9);
-			dept = rs2.getString(10);
-			hSSN = rs2.getInt(11);
-		} catch (SQLException ex) {/* ignore */}
 		// Create a Resident tuple with Applicant info and AssignedRoom#
-		String insert = "INSERT INTO Resident VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";			
+		String insert = "INSERT INTO Resident VALUES(?,?,?,?)";			
 		PreparedStatement stmt3 = null;
 		try {
 			stmt3 = conn.prepareStatement(insert);
 			stmt3.setInt(1, mySID);
-			stmt3.setInt(2, roomNum);
-			stmt3.setInt(3, buildingID);
-			stmt3.setString(4, pw);
-			stmt3.setInt(5, ssn);
-			stmt3.setString(6, AppName);
-			stmt3.setString(7, gender);
-			stmt3.setBoolean(8, marStat);
-			stmt3.setString(9, address);
-			stmt3.setInt(10, phone);
-			stmt3.setString(11, major);
-			stmt3.setString(12, dept);
-			stmt3.setInt(13, hSSN);
-			ResultSet rs3;
-			rs3 = stmt3.executeQuery(insert);
+			stmt3.setInt(2, buildingID);
+			stmt3.setInt(3, roomNum);
+			stmt3.setString(4, prefRoomMateSID);
+			stmt3.executeQuery(insert);
+			System.out.println("You have been added to their room.");
 		} catch (SQLException ex) {/* ignore */}
 		// Remove Applicant from relation
 		String dlt = "DELETE FROM TABLE Applicant WHERE StudentID = ?";
@@ -329,6 +307,7 @@ public class applicantInterface {
 			stmt4.setInt(1, mySID);
 			ResultSet rs4;
 			rs4 = stmt4.executeQuery(dlt);
+			System.out.println("You have been removed from Applicant table");
 		} catch (SQLException ex) {/* ignore */}
 		// Decrement "SpaceAvailable" attribute for the Assigned Room
 		String update = "UPDATE Room SET SpaceAvailable = (SpaceAvailable - 1) " +
@@ -338,26 +317,14 @@ public class applicantInterface {
 			stmt5 = conn.prepareStatement(update);
 			stmt5.setInt(1, roomNum);
 			stmt5.setInt(2, buildingID);
-			ResultSet rs5;
-			rs5 = stmt5.executeQuery(update);
+			stmt5.executeQuery(update);
+			System.out.println("Room "+buildingID+"-"+roomNum+" has 1 less bed available");
 		} catch (SQLException ex) {/* ignore */}
-		System.out.println("You have been added to their room.");
 	}	
 	public static void assignRoomStyle(String style, int minBeds, Connection conn) {
 		// pull room# & BuilidingID of 1st room with matching description (style) and minimum number of beds (minBeds) available
 		int roomNum = 0;
 		int buildingID = 0;
-		int sid = mySID;
-		String pw = "";
-		int ssn = 0;
-		String AppName = "";
-		String gender = "";
-		boolean marStat = false;
-		String address = "";
-		int phone = 0;
-		String major = "";
-		String dept = "";
-		int hSSN = 0;
 		String query = "SELECT RoomNum, BuildingID " +
 						"FROM Room " +
 						"WHERE Style = ? AND " +
@@ -374,47 +341,16 @@ public class applicantInterface {
 			System.out.println("We have chosen a room for you.");
 		} catch (SQLException ex) {/* ignore */}
 		// Transfer over personal information from Applicant to Resident
-		String query2 = "SELECT * " +
-						"FROM Applicant " +
-						"WHERE StudentID = ? ";
-		PreparedStatement stmt2 = null;
-		try {
-			stmt2 = conn.prepareStatement(query2);
-			stmt.setInt(1, mySID);
-			ResultSet rs2;
-			rs2 = stmt2.executeQuery(query2);
-			pw = rs2.getString(2);
-			ssn = rs2.getInt(3);
-			AppName = rs2.getString(4);
-			gender = rs2.getString(5);
-			marStat = rs2.getBoolean(6);
-			address = rs2.getString(7);
-			phone = rs2.getInt(8);
-			major = rs2.getString(9);
-			dept = rs2.getString(10);
-			hSSN = rs2.getInt(11);
-			System.out.println("Your application file has been pulled");
-		} catch (SQLException ex) {/* ignore */}
 		// Create a Resident tuple with Applicant info and AssignedRoom#
-		String insert = "INSERT INTO Resident VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";			
+		String insert = "INSERT INTO Resident VALUES(?,?,?,?)";			
 		PreparedStatement stmt3 = null;
 		try {
 			stmt3 = conn.prepareStatement(insert);
 			stmt3.setInt(1, mySID);
-			stmt3.setInt(2, roomNum);
-			stmt3.setInt(3, buildingID);
-			stmt3.setString(4, pw);
-			stmt3.setInt(5, ssn);
-			stmt3.setString(6, AppName);
-			stmt3.setString(7, gender);
-			stmt3.setBoolean(8, marStat);
-			stmt3.setString(9, address);
-			stmt3.setInt(10, phone);
-			stmt3.setString(11, major);
-			stmt3.setString(12, dept);
-			stmt3.setInt(13, hSSN);
-			ResultSet rs3;
-			rs3 = stmt3.executeQuery(insert);
+			stmt3.setInt(2, buildingID);
+			stmt3.setInt(3, roomNum);
+			stmt3.setString(4, prefRoomMateSID);
+			stmt3.executeQuery(insert);
 			System.out.println("You are now a resident");
 			System.out.println("You have been assigned to\troom: "+roomNum+"\n\t\t\t\tbuilding: "+buildingID);
 		} catch (SQLException ex) {/* ignore */}
@@ -424,8 +360,7 @@ public class applicantInterface {
 		try {
 			stmt4 = conn.prepareStatement(dlt);
 			stmt4.setInt(1, mySID);
-			ResultSet rs4;
-			rs4 = stmt4.executeQuery(dlt);
+			stmt4.executeQuery(dlt);
 			System.out.println("You have been removed from the Applicant's table");
 		} catch (SQLException ex) {/* ignore */}
 		// Decrement "SpaceAvailable" attribute for the Assigned Room
@@ -436,8 +371,7 @@ public class applicantInterface {
 			stmt5 = conn.prepareStatement(update);
 			stmt5.setInt(1, roomNum);
 			stmt5.setInt(2, buildingID);
-			ResultSet rs5;
-			rs5 = stmt5.executeQuery(update);
+			stmt5.executeQuery(update);
 			System.out.println("There is now 1 less space open in room "+buildingID+"-"+roomNum);
 		} catch (SQLException ex) {/* ignore */}
 	}
